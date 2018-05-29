@@ -80,10 +80,11 @@ CardJs.CREDIT_CARD_NUMBER_DISCOVER_MASK   = "XXXX XXXX XXXX XXXX";
 CardJs.CREDIT_CARD_NUMBER_JCB_MASK        = "XXXX XXXX XXXX XXXX";
 CardJs.CREDIT_CARD_NUMBER_AMEX_MASK       = "XXXX XXXXXX XXXXX";
 CardJs.CREDIT_CARD_NUMBER_DINERS_MASK     = "XXXX XXXX XXXX XX";
+CardJs.CREDIT_CARD_NUMBER_ELO_MASK        = "XXXX XXXX XXXX XXXX";
 
 CardJs.prototype.creditCardNumberMask = CardJs.CREDIT_CARD_NUMBER_DEFAULT_MASK;
-CardJs.CREDIT_CARD_NUMBER_PLACEHOLDER = "Card number";
-CardJs.NAME_PLACEHOLDER =  "Name on card";
+CardJs.CREDIT_CARD_NUMBER_PLACEHOLDER = "Número do cartão";
+CardJs.NAME_PLACEHOLDER =  "Nome do titular do cartão (como está gravado no cartão)";
 CardJs.EXPIRY_MASK = "XX / XX";
 CardJs.EXPIRY_PLACEHOLDER = "MM / YY";
 CardJs.EXPIRY_USE_DROPDOWNS = false;
@@ -432,6 +433,11 @@ CardJs.cardTypeFromNumber = function(number) {
   re = new RegExp("^(6011|622(12[6-9]|1[3-9][0-9]|[2-8][0-9]{2}|9[0-1][0-9]|92[0-5]|64[4-9])|65)");
   if (number.match(re) != null)
     return "Discover";
+
+  // Elo
+  re = new RegExp("/^((((636368)|(438935)|(504175)|(451416)|(636297))\d{0,10})|((5067)|(4576)|(4011))\d{0,12})$/");
+  if (number.match(re) != null)
+    return "Elo";
 
   return "";
 };
@@ -835,6 +841,9 @@ CardJs.prototype.setCardTypeIconFromNumber = function(number) {
     case "JCB":
       this.setCardTypeAsJcb();
       break;
+    case "Elo":
+      this.setCardTypeAsElo();
+      break;
     default:
       this.clearCardType();
   }
@@ -926,6 +935,13 @@ CardJs.prototype.setCardTypeIconAsJcb = function() {
   this.elem.find(".card-number-wrapper .card-type-icon").attr("class", "card-type-icon show jcb");
 };
 
+/**
+ * Set the card type icon as - Elo
+ */
+CardJs.prototype.setCardTypeIconAsElo = function() {
+  this.elem.find(".card-number-wrapper .card-type-icon").attr("class", "card-type-icon show elo");
+};
+
 
 // --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 
@@ -996,6 +1012,16 @@ CardJs.prototype.setCardTypeAsDiners = function() {
 CardJs.prototype.setCardTypeAsJcb = function() {
   this.setCardTypeIconAsJcb();
   this.setCardMask(CardJs.CREDIT_CARD_NUMBER_JCB_MASK);
+  this.setCvc3();
+};
+
+
+/**
+ * Set the card type as - Elo
+ */
+CardJs.prototype.setCardTypeAsElo = function() {
+  this.setCardTypeIconAsElo();
+  this.setCardMask(CardJs.CREDIT_CARD_NUMBER_ELO_MASK);
   this.setCvc3();
 };
 
